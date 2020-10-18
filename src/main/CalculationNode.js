@@ -121,10 +121,9 @@ const CalculationNode = {
         if (amountFrom === 0) return 0;
 
         let amountTo = 0;
-        const bidRates = Object.keys(depthSnapshot.bids || {});
-        const askRates = Object.keys(depthSnapshot.asks || {});
 
         if (ticker === symbolFrom + symbolTo) {
+            const bidRates = Object.keys(depthSnapshot.bids || {});
             for (let i=0; i<bidRates.length; i++) {
                 const rate = parseFloat(bidRates[i]);
                 const quantity = depthSnapshot.bids[bidRates[i]];
@@ -139,6 +138,7 @@ const CalculationNode = {
             }
             throw new Error(`Bid depth (${bidRates.length}) too shallow to convert ${amountFrom} ${symbolFrom} to ${symbolTo} using ${ticker}`);
         } else {
+            const askRates = Object.keys(depthSnapshot.asks || {});
             for (let i=0; i<askRates.length; i++) {
                 const rate = parseFloat(askRates[i]);
                 const quantity = depthSnapshot.asks[askRates[i]];
@@ -159,15 +159,13 @@ const CalculationNode = {
         if (amountFrom === 0) return 0;
 
         let amountTo = 0;
-        let i, rate, quantity, exchangeableAmount;
-        const bidRates = Object.keys(depthSnapshot.bids || {});
-        const askRates = Object.keys(depthSnapshot.asks || {});
 
         if (ticker === symbolFrom + symbolTo) {
-            for (i=0; i<askRates.length; i++) {
-                rate = parseFloat(askRates[i]);
-                quantity = depthSnapshot.asks[askRates[i]];
-                exchangeableAmount = quantity * rate;
+            const askRates = Object.keys(depthSnapshot.asks || {});
+            for (let i=0; i<askRates.length; i++) {
+                const rate = parseFloat(askRates[i]);
+                const quantity = depthSnapshot.asks[askRates[i]];
+                const exchangeableAmount = quantity * rate;
                 if (quantity < amountFrom) {
                     amountFrom -= quantity;
                     amountTo += exchangeableAmount;
@@ -178,10 +176,11 @@ const CalculationNode = {
             }
             throw new Error(`Ask depth (${askRates.length}) too shallow to reverse convert ${amountFrom} ${symbolFrom} to ${symbolTo} using ${ticker}`);
         } else {
-            for (i=0; i<bidRates.length; i++) {
-                rate = parseFloat(bidRates[i]);
-                quantity = depthSnapshot.bids[bidRates[i]];
-                exchangeableAmount = quantity * rate;
+            const bidRates = Object.keys(depthSnapshot.bids || {});
+            for (let i=0; i<bidRates.length; i++) {
+                const rate = parseFloat(bidRates[i]);
+                const quantity = depthSnapshot.bids[bidRates[i]];
+                const exchangeableAmount = quantity * rate;
                 if (exchangeableAmount < amountFrom) {
                     amountFrom -= exchangeableAmount;
                     amountTo += quantity;
